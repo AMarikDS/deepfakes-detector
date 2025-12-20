@@ -4,8 +4,7 @@
 Запускает Qt-интерфейс с детектором дипфейков.
 """
 
-from app.ui.ui_app import main as ui_main
-
+from app.ui.app import main
 
 if __name__ == "__main__":
-    ui_main()
+    main()
