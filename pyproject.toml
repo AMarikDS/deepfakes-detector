@@ -13,4 +13,6 @@ dependencies = [
     "numpy",
     "safetensors",
     "pyqt6",
+    "av>=16.0.1",
+    "opencv-python>=4.11.0.86",
 ]
