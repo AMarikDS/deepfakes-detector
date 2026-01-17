@@ -1,4 +1,3 @@
-# app/core/video.py
 from __future__ import annotations
 
 from dataclasses import dataclass
@@ -41,9 +40,6 @@ def _pick_num_samples(duration_sec: float) -> int:
 
 
 def _run_ffmpeg_transcode_to_mp4(src: Path) -> Path:
-    """
-    Фоллбек: приводим к MP4 (H.264, yuv420p), чтобы декодирование было максимально совместимым.
-    """
     tmp_dir = Path(tempfile.mkdtemp(prefix="deepfake_video_"))
     dst = tmp_dir / f"{src.stem}_normalized.mp4"
 
@@ -72,10 +68,7 @@ def read_video_uniform_frames(
     prefer_pyav: bool = True,
     allow_ffmpeg_fallback: bool = True,
 ) -> Tuple[List[PILImage.Image], VideoMeta]:
-    """
-    Декодируем видео и возвращаем N PIL-кадров, равномерно по длительности.
-    max_side: ограничение на размер кадра для ускорения.
-    """
+
     if prefer_pyav:
         try:
             return _read_with_pyav(path, max_side=max_side)
@@ -89,7 +82,6 @@ def read_video_uniform_frames(
 
     if allow_ffmpeg_fallback:
         normalized = _run_ffmpeg_transcode_to_mp4(path)
-        # после перекодировки пробуем снова
         if prefer_pyav:
             try:
                 return _read_with_pyav(normalized, max_side=max_side)
@@ -108,7 +100,7 @@ def _resize_keep_aspect(w: int, h: int, max_side: int) -> Tuple[int, int]:
 
 
 def _read_with_opencv(path: Path, max_side: int) -> Tuple[List[PILImage.Image], VideoMeta]:
-    import cv2  # type: ignore
+    import cv2
 
     cap = cv2.VideoCapture(str(path))
     if not cap.isOpened():
@@ -117,12 +109,10 @@ def _read_with_opencv(path: Path, max_side: int) -> Tuple[List[PILImage.Image], 
     fps = cap.get(cv2.CAP_PROP_FPS) or 0.0
     total_frames = int(cap.get(cv2.CAP_PROP_FRAME_COUNT) or 0)
     if fps <= 0.0 and total_frames > 0:
-        # fallback: оценка fps (не всегда корректно)
         fps = 25.0
     duration_sec = (total_frames / fps) if (fps > 0 and total_frames > 0) else 0.0
 
     if duration_sec <= 0:
-        # пытаемся "прочитать" часть чтобы оценить
         duration_sec = max(1.0, total_frames / max(fps, 1.0))
 
     n_samples = min(_pick_num_samples(duration_sec), max(total_frames, 1))
@@ -152,28 +142,24 @@ def _read_with_opencv(path: Path, max_side: int) -> Tuple[List[PILImage.Image], 
 
 
 def _read_with_pyav(path: Path, max_side: int) -> Tuple[List[PILImage.Image], VideoMeta]:
-    import av  # type: ignore
+    import av
 
     container = av.open(str(path))
     stream = next((s for s in container.streams if s.type == "video"), None)
     if stream is None:
         raise RuntimeError("No video stream found.")
 
-    # fps может быть None
     fps = float(stream.average_rate) if stream.average_rate is not None else 0.0
     duration_sec = float(stream.duration * stream.time_base) if stream.duration else 0.0
 
-    # total_frames может быть неизвестно
     total_frames = int(stream.frames) if stream.frames else 0
     if duration_sec <= 0.0 and total_frames > 0 and fps > 0.0:
         duration_sec = total_frames / fps
     if duration_sec <= 0.0:
-        # хотя бы что-то
         duration_sec = 10.0
 
     n_samples = _pick_num_samples(duration_sec)
 
-    # Семплинг по timestamp: выбираем целевые времена и извлекаем ближайшие кадры.
     target_ts = [duration_sec * (k + 0.5) / n_samples for k in range(n_samples)]
 
     frames: List[PILImage.Image] = []
@@ -188,7 +174,7 @@ def _read_with_pyav(path: Path, max_side: int) -> Tuple[List[PILImage.Image], Vi
         if t < target_ts[next_target_i]:
             continue
 
-        img = frame.to_image()  # PIL Image
+        img = frame.to_image()
         w, h = img.size
         new_w, new_h = _resize_keep_aspect(w, h, max_side)
         if (new_w, new_h) != (w, h):

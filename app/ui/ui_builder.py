@@ -28,7 +28,6 @@ def build_ui(self):
     main_layout.setContentsMargins(10, 10, 10, 10)
     main_layout.setSpacing(12)
 
-    # ================== LEFT PANEL — IMAGE =======================
     left_panel = QWidget()
     left_layout = QVBoxLayout(left_panel)
     left_layout.setContentsMargins(0, 0, 0, 0)
@@ -74,13 +73,11 @@ def build_ui(self):
 
     left_layout.addWidget(self.preview_stack)
 
-    # ================== RIGHT PANEL — CONTROLS ======================
     right_panel = QWidget()
     right_panel.setMinimumWidth(380)
     right_layout = QVBoxLayout(right_panel)
     right_layout.setSpacing(14)
 
-    # ----- Controls -----
     controls_box = QGroupBox("")
     controls_box.setStyleSheet(
         """
@@ -125,11 +122,9 @@ def build_ui(self):
     self.clear_btn.clicked.connect(self.clear_interface)
     controls_layout.addWidget(self.clear_btn, 4, 0, 1, 2)
 
-    # Sync порога
     self.threshold_spin.valueChanged.connect(self.threshold_slider.setValue)
     self.threshold_slider.valueChanged.connect(self.threshold_spin.setValue)
 
-    # ----- Results -----
     result_box = QGroupBox("")
     result_box.setStyleSheet(
         """
@@ -153,20 +148,17 @@ def build_ui(self):
     self.result_label.setMinimumHeight(120)
     result_layout.addWidget(self.result_label)
 
-    # ----- Final UI assemble -----
     right_layout.addWidget(controls_box)
     right_layout.addWidget(result_box, stretch=1)
 
     main_layout.addWidget(left_panel, stretch=4)
     main_layout.addWidget(right_panel, stretch=2)
 
-    # Status Bar
     self.status_bar = QStatusBar()
     self.status_bar.setStyleSheet("color: white;")
     self.setStatusBar(self.status_bar)
     self.status_bar.showMessage("Готово.")
 
-    # ----- Video controls -----
     video_controls = QHBoxLayout()
 
     self.play_btn = QPushButton("▶ Play")

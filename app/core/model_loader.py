@@ -1,8 +1,3 @@
-"""
-Загрузка весов модели из checkpoint.
-Максимально близко к исходной логике backend.py.
-"""
-
 import os
 import torch
 

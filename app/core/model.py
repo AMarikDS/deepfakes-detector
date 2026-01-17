@@ -1,8 +1,3 @@
-"""
-Модель DeepfakeSigLIP.
-Взята один-в-один из backend.py.
-"""
-
 import torch
 import torch.nn as nn
 from transformers import AutoModel

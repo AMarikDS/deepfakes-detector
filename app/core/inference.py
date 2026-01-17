@@ -1,4 +1,3 @@
-# app/core/inference.py
 from dataclasses import dataclass
 from typing import List, Optional
 
@@ -124,9 +123,7 @@ def _aggregate_probs(probs: List[float], method: str, chunk_count: int = 8) -> f
         s2 = s[k:-k] if len(s) > 2 * k else s
         return float(sum(s2) / len(s2))
 
-    # default: median_of_means
     k = max(1, min(chunk_count, len(probs)))
-    # равномерно режем на k чанков
     chunks = []
     n = len(probs)
     for i in range(k):

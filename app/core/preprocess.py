@@ -1,7 +1,3 @@
-"""
-Предобработка изображения: нормализация, EXIF, RGBA → RGB.
-"""
-
 import numpy as np
 from PIL import Image as PILImage
 
@@ -29,14 +25,12 @@ def normalize_image_to_rgb(img_in):
     else:
         img = PILImage.fromarray(_to_uint8(np.asarray(img_in)))
 
-    # EXIF-ориентация
     try:
         import PIL.ImageOps as ImageOps
         img = ImageOps.exif_transpose(img)
     except Exception:
         pass
 
-    # RGBA → RGB
     if img.mode == "RGBA":
         bg = PILImage.new("RGB", img.size, (0, 0, 0))
         bg.paste(img, mask=img.split()[-1])

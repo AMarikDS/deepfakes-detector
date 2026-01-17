@@ -46,18 +46,12 @@ class MainWindow(QMainWindow):
         self.media_player.mediaStatusChanged.connect(self._on_media_status)
         self.media_player.playbackStateChanged.connect(self._on_playback_state)
 
-    # -------------------------------------------------------------------------
-    # ПРОКСИ-МЕТОДЫ: имена и поведение как в исходном файле
-    # -------------------------------------------------------------------------
-
-    # --- UI actions ---
     def open_image(self):
         media_ops.open_image(self)
 
     def clear_interface(self):
         media_ops.clear_interface(self)
 
-    # --- Media load ---
     def load_image_from_path(self, path: Path):
         media_ops.load_image_from_path(self, path)
 
@@ -70,7 +64,6 @@ class MainWindow(QMainWindow):
     def _update_preview(self, path: Path):
         media_ops._update_preview(self, path)
 
-    # --- Inference ---
     def run_prediction(self):
         inference_ops.run_prediction(self)
 
@@ -80,14 +73,12 @@ class MainWindow(QMainWindow):
     def _display_video_result(self, result):
         inference_ops._display_video_result(self, result)
 
-    # --- Drag & Drop ---
     def dragEnterEvent(self, event):
         dnd_ops.dragEnterEvent(self, event)
 
     def dropEvent(self, event):
         dnd_ops.dropEvent(self, event)
 
-    # --- Player callbacks ---
     def _on_player_error(self, error, error_string):
         media_ops._on_player_error(self, error, error_string)
 
@@ -105,8 +96,3 @@ class MainWindow(QMainWindow):
 
     def on_media_status(self, status):
         media_ops.on_media_status(self, status)
-
-
-# -----------------------------------------------------------------------------
-# MAIN (оставляем только в app/ui/app.py, здесь не нужен)
-# -----------------------------------------------------------------------------

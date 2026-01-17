@@ -87,7 +87,7 @@ def _load_video(self, path: Path):
     self.stop_btn.setEnabled(True)
     self.play_btn.setText("▶ Play")
 
-    self.predict_btn.setEnabled(True)  # ← ВОТ ЭТОГО НЕ ХВАТАЛО
+    self.predict_btn.setEnabled(True)
 
     self.status_bar.showMessage("Видео загружено. Нажмите Play.")
 
@@ -107,29 +107,23 @@ def _update_preview(self, path: Path):
 
 
 def clear_interface(self):
-    # Остановить видео
     self.media_player.stop()
     self.preview_stack.setCurrentIndex(0)
 
-    # Очистить превью
     self.image_label.clear()
     self.image_label.setText("Изображение не загружено")
 
-    # 🔹 ОЧИСТИТЬ РЕЗУЛЬТАТ
     self.result_label.clear()
     self.result_label.setText("Нет данных.")
 
-    # Сброс состояния
     self.current_image_path = None
     self.current_pil_image = None
     self.current_media_path = None
     self.current_media_type = None
 
-    # Кнопки видео
     self.play_btn.setVisible(False)
     self.stop_btn.setVisible(False)
 
-    # Кнопка анализа
     self.predict_btn.setEnabled(False)
 
     self.status_bar.showMessage("Очищено.")
