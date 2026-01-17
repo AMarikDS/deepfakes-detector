@@ -16,3 +16,15 @@ dependencies = [
     "av>=16.0.1",
     "opencv-python>=4.11.0.86",
 ]
+
+[dependency-groups]
+dev = [
+    "mypy>=1.19.1",
+    "pytest>=9.0.2",
+    "ruff>=0.14.13",
+]
+
+[tool.ruff]
+exclude = [
+  "notebooks",
+]

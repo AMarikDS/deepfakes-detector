@@ -6,7 +6,7 @@ from PyQt6.QtGui import QPixmap
 from PyQt6.QtMultimedia import QMediaPlayer
 from PyQt6.QtWidgets import QFileDialog
 
-from app.core.video import is_video_path, read_video_uniform_frames
+from app.core.video import is_video_path
 from app.services.logger import logger
 
 

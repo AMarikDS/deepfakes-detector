@@ -1,7 +1,6 @@
 import numpy as np
 from PIL import Image as PILImage
 
-from app.services.logger import logger
 
 
 def _to_uint8(arr: np.ndarray) -> np.ndarray:

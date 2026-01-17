@@ -1,12 +1,12 @@
 from __future__ import annotations
 
-import sys
 from typing import Optional
 from pathlib import Path
 
 from PIL import Image as PILImage
 from PyQt6.QtMultimedia import QMediaPlayer
 from PyQt6.QtWidgets import QMainWindow
+from PyQt6.QtMultimediaWidgets import QVideoWidget
 
 from app.core.inference import DeepfakeClassifier
 from app.services.logger import logger
@@ -18,6 +18,7 @@ from app.ui import inference_ui as inference_ops
 from app.ui import drag_drop as dnd_ops
 
 
+
 class MainWindow(QMainWindow):
     def __init__(self, classifier: DeepfakeClassifier):
         super().__init__()
@@ -27,12 +28,14 @@ class MainWindow(QMainWindow):
         self.current_pil_image: Optional[PILImage.Image] = None
         self.current_media_path: Optional[Path] = None
         self.current_media_type: Optional[str] = None
+        self.video_widget: QVideoWidget
 
         self.setWindowTitle("Deepfake Detector — SigLIP2")
         self.resize(1100, 700)
         self.setAcceptDrops(True)
 
         logger.info("GUI запущено.")
+
 
         build_ui(self)
         apply_style(self)

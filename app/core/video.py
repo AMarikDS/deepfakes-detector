@@ -2,9 +2,8 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Iterable, List, Optional, Tuple
+from typing import List, Tuple
 
-import math
 import tempfile
 import subprocess
 
@@ -150,7 +149,10 @@ def _read_with_pyav(path: Path, max_side: int) -> Tuple[List[PILImage.Image], Vi
         raise RuntimeError("No video stream found.")
 
     fps = float(stream.average_rate) if stream.average_rate is not None else 0.0
-    duration_sec = float(stream.duration * stream.time_base) if stream.duration else 0.0
+    if stream.duration is not None and stream.time_base is not None:
+        duration_sec = float(stream.duration * stream.time_base)
+    else:
+        duration_sec = 0.0
 
     total_frames = int(stream.frames) if stream.frames else 0
     if duration_sec <= 0.0 and total_frames > 0 and fps > 0.0:
@@ -168,7 +170,10 @@ def _read_with_pyav(path: Path, max_side: int) -> Tuple[List[PILImage.Image], Vi
     for frame in container.decode(video=0):
         if next_target_i >= len(target_ts):
             break
-        t = float(frame.pts * frame.time_base) if frame.pts is not None else None
+        if frame.pts is not None and frame.time_base is not None:
+            t = float(frame.pts * frame.time_base)
+        else:
+            t = None
         if t is None:
             continue
         if t < target_ts[next_target_i]:
